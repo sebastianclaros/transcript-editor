@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { isLanguage, languageFromLocale, type Language } from "@transcript-editor/core";
+import {
+  defaultConfig,
+  isLanguage,
+  languageFromLocale,
+  type Language,
+} from "@transcript-editor/core";
 import {
   LocalFsProvider,
   type HostApi,
@@ -42,9 +47,8 @@ export function App({ host, provider }: AppProps) {
         );
       } else {
         // Without settings the app still works with defaults.
-        setSettings(null);
         setLanguage(languageFromLocale(info.ok ? info.value.locale : undefined));
-        setSettings(await fallbackSettings(host));
+        setSettings({ ...defaultConfig(), recovered: false });
       }
     })();
     return () => {
@@ -67,12 +71,6 @@ export function App({ host, provider }: AppProps) {
       ) : null}
     </I18nProvider>
   );
-}
-
-async function fallbackSettings(host: HostApi): Promise<SettingsView> {
-  const { defaultConfig } = await import("@transcript-editor/core");
-  void host;
-  return { ...defaultConfig(), recovered: false };
 }
 
 function Shell({
