@@ -1,0 +1,41 @@
+# agent scratch
+.agents/
+
+# dependencies and build output
+node_modules/
+dist/
+out/
+release/
+coverage/
+
+# secrets / env
+.env*
+!.env.example
+
+# logs
+*.log
+
+# private data and runtime dumps
+guardados/
+userData/
+userData-dump*/
+
+# OS
+.DS_Store
+
+# python / transcription venv (tools/transcribe)
+input/
+output/
+venv/
+.venv/
+/bin/
+/lib/
+/include/
+pyvenv.cfg
+__pycache__/
+
+# misc generated
+*.zip
+*.bak
+proyecto.bak*.json
+apps/desktop/e2e/artifacts/

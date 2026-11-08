@@ -1,0 +1,8 @@
+{
+  "productName": "Transcript Editor",
+  "slug": "transcript-editor",
+  "appId": "io.github.sebastianclaros.transcripteditor",
+  "repo": "sebastianclaros/transcript-editor",
+  "executableName": "transcript-editor",
+  "protocols": { "app": "app", "media": "app-media" }
+}
