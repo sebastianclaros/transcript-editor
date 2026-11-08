@@ -1,0 +1,12 @@
+[
+  { "seconds": 0, "speaker": "SPEAKER_00", "estado": "verificado" },
+  { "seconds": 7, "speaker": "SPEAKER_01", "estado": "corregido" },
+  { "seconds": 15, "speaker": "SPEAKER_00", "estado": "leido" },
+  { "seconds": 20, "speaker": "SPEAKER_01", "estado": "leido" },
+  { "seconds": 30, "speaker": "SPEAKER_00", "estado": "pendiente" },
+  { "seconds": 35, "speaker": "SPEAKER_01", "estado": "pendiente" },
+  { "seconds": 45, "speaker": "SPEAKER_00", "estado": "pendiente" },
+  { "seconds": 50, "speaker": "SPEAKER_01", "estado": "pendiente" },
+  { "seconds": 60, "speaker": "SPEAKER_00", "estado": "pendiente" },
+  { "seconds": 67, "speaker": "SPEAKER_01", "estado": "pendiente" }
+]

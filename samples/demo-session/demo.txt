@@ -1,0 +1,10 @@
+SPEAKER_00: Buenas tardes, gracias por recibirnos en la huerta. Contanos cómo empezó todo.
+SPEAKER_01: Empezó hace seis años, con un terreno baldío y quince vecinos con ganas de plantar.
+SPEAKER_00: ¿Qué fue lo más difícil al principio?
+SPEAKER_01: Conseguir agua. Hicimos una cisterna con tachos reciclados y juntamos lluvia durante todo el otoño.
+SPEAKER_00: Y hoy, ¿cuántas familias participan?
+SPEAKER_01: Más de cuarenta. Cada sábado hay una jornada de trabajo y después compartimos un almuerzo.
+SPEAKER_00: ¿Qué cultivan en esta época del año?
+SPEAKER_01: Acelga, rúcula, zanahorias y unas calabazas enormes que son el orgullo del barrio.
+SPEAKER_00: Una última pregunta: ¿qué le dirías a alguien que quiere armar una huerta en su cuadra?
+SPEAKER_01: Que empiece chico, que invite a los vecinos y que no se rinda con la primera sequía.

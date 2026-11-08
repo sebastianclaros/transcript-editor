@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "titulo": "Huerta comunitaria (demo)",
+  "descripcion": "Sesión de ejemplo con datos inventados: una entrevista breve sobre una huerta de barrio. El audio es solo un tono.",
+  "archivos": {
+    "audio": "demo.m4a",
+    "texto": "demo.txt",
+    "meta": "demo.meta.json"
+  },
+  "speakers": [
+    { "id": "SPEAKER_00", "nombre": "Lucía Prado", "iniciales": "LP", "color": "#7fd1ff" },
+    { "id": "SPEAKER_01", "nombre": "Mateo Rey", "iniciales": "MR", "color": "#ffc47f" }
+  ],
+  "visualizacion": { "mostrar": "nombre", "colorearTexto": true }
+}
