@@ -1,0 +1,18 @@
+/* Dark theme variables, copied from the prototype. */
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --border: #2a2f3a;
+  --text: #e6e6e6;
+  --muted: #8a93a3;
+  --spk-a: #7fd1ff;
+  --spk-b: #ffc47f;
+  --accent: #4f8cff;
+  --warn: #ff9f43;
+  --bad: #ff6b6b;
+  /* colores de estado (barra vertical) */
+  --est-pendiente: #4a5160;
+  --est-leido: #4f8cff;
+  --est-corregido: #ff9f43;
+  --est-verificado: #35c759;
+}
