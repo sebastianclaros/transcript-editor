@@ -1,0 +1,8 @@
+# Minimums taken from what transcribir.py imports. Pin exact versions of your own working
+# environment before relying on this (torch/torchaudio APIs changed a lot between releases;
+# transcribir.py contains compatibility shims for torch >= 2.6 and torchaudio >= 2.9).
+openai-whisper>=20240930
+pyannote.audio>=3.1
+torch>=2.1
+torchaudio>=2.1
+soundfile>=0.12
