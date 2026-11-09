@@ -19,7 +19,8 @@
     "dist:linux": "npm run build && electron-builder --config electron-builder.config.cjs --linux",
     "dist:mac": "npm run build && electron-builder --config electron-builder.config.cjs --mac",
     "dist:win": "npm run build && electron-builder --config electron-builder.config.cjs --win",
-    "test:e2e": "node scripts/run-e2e.mjs"
+    "test:e2e": "node scripts/run-e2e.mjs",
+    "docs:screenshots": "E2E_SCREENSHOTS=1 node scripts/run-e2e.mjs e2e/screenshots.spec.ts"
   },
   "dependencies": {
     "electron-log": "5.4.4",
