@@ -1,0 +1,30 @@
+# Labels created by scripts/gh-bootstrap.sh
+- { name: "type: bug", color: "d73a4a", description: "Something is broken" }
+- { name: "type: feature", color: "a2eeef", description: "New capability" }
+- { name: "type: docs", color: "0075ca", description: "Documentation" }
+- { name: "type: chore", color: "cfd3d7", description: "Maintenance" }
+- { name: "area: player", color: "1d76db", description: "Audio player and hotkeys" }
+- { name: "area: editor", color: "1d76db", description: "Transcript editing and states" }
+- { name: "area: speakers", color: "1d76db", description: "Speakers and project file" }
+- { name: "area: stats", color: "1d76db", description: "Minimap and statistics" }
+- { name: "area: storage", color: "1d76db", description: "Local storage and memory" }
+- { name: "area: drive", color: "1d76db", description: "Google Drive" }
+- { name: "area: packaging", color: "1d76db", description: "Installers and releases" }
+- { name: "area: docs", color: "1d76db", description: "Docs and community files" }
+- { name: "area: ci", color: "1d76db", description: "GitHub Actions" }
+- { name: "priority: high", color: "b60205", description: "" }
+- { name: "priority: medium", color: "fbca04", description: "" }
+- { name: "priority: low", color: "0e8a16", description: "" }
+- { name: "good first issue", color: "7057ff", description: "Good for newcomers" }
+- { name: "help wanted", color: "008672", description: "Extra attention is needed" }
+- {
+    name: "blocked/signing-certs",
+    color: "5319e7",
+    description: "Waiting for signing certificates",
+  }
+- {
+    name: "blocked/google-cloud",
+    color: "5319e7",
+    description: "Waiting for a Google Cloud project",
+  }
+- { name: "blocked/upstream", color: "5319e7", description: "Waiting for an upstream fix" }
