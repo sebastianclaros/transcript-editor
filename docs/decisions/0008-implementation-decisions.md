@@ -17,3 +17,7 @@ Ambiguities resolved while building v0.1 (the maintainer was away):
   identical. This can only hide an outside change in an extreme race, never produce a false conflict.
 - The sample is copied to `Documents/Transcript Editor Demo` and never overwritten.
 - The window may appear briefly during `--smoke-test` and E2E runs on machines with a display.
+- `npm audit --omit=dev` reports one advisory against zod 3 (memory exhaustion when validating huge constrained
+  collections). The app only validates local files and bounded IPC payloads, so it is accepted for v0.1; migrating to
+  zod 4 is a breaking change tracked for a later release. Dev-tool advisories (electron-builder, vitest chain) do not
+  ship in the app.
