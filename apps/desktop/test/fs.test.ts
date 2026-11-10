@@ -95,10 +95,24 @@ describe("resolveInProject", () => {
   });
 
   it("isInside handles prefixes and windows case-insensitivity", () => {
-    expect(isInside("/a/b", "/a/b/c")).toBe(true);
-    expect(isInside("/a/b", "/a/bc")).toBe(false);
-    expect(isInside("/a/b", "/a/b")).toBe(false);
-    expect(isInside("C:\\Data", "c:\\data\\x", "win32")).toBe(false); // path.relative is posix here; just no crash
+    expect(isInside("/a/b", "/a/b/c", "linux")).toBe(true);
+    expect(isInside("/a/b", "/a/bc", "linux")).toBe(false);
+    expect(isInside("/a/b", "/a/b", "linux")).toBe(false);
+    expect(isInside("/a/b", "/a/b/..c", "linux")).toBe(true); // a name starting with dots is not traversal
+    expect(isInside("/a/b", "/a/c", "linux")).toBe(false);
+    expect(isInside("/a/b", "/a/B/c", "linux")).toBe(false); // exact on posix
+  });
+  it("isInside applies win32 rules: drive-letter case, separators, prefix, siblings, other drives", () => {
+    const w = "win32" as const;
+    expect(isInside("C:\\Data", "c:\\data\\x", w)).toBe(true);
+    expect(isInside("C:\\Data\\", "C:/Data/x/y.mp4", w)).toBe(true);
+    expect(isInside("\\\\?\\C:\\Data", "C:\\Data\\x", w)).toBe(true);
+    expect(isInside("\\\\?\\UNC\\h\\s\\d", "\\\\h\\s\\d\\x", w)).toBe(true);
+    expect(isInside("C:\\Data", "C:\\Data", w)).toBe(false);
+    expect(isInside("C:\\Data", "C:\\Data2\\x", w)).toBe(false);
+    expect(isInside("C:\\Data", "C:\\Data\\..\\Other\\x", w)).toBe(false);
+    expect(isInside("C:\\Data", "D:\\Data\\x", w)).toBe(false);
+    expect(isInside("C:\\Data", "\\\\other\\share\\x", w)).toBe(false);
   });
 });
 

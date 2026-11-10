@@ -46,6 +46,13 @@ The builds are **not signed yet** (see [docs/releasing.md](docs/releasing.md)):
 - **Windows**: in the SmartScreen warning choose _More info_ then _Run anyway_.
 - **Linux**: `chmod +x transcript-editor-*.AppImage` and run it.
 
+### Platform status
+
+CI runs unit and integration tests and the build on Ubuntu, Windows and macOS (Apple Silicon runner),
+the real Electron E2E suite on Linux (Xvfb) and a smoke test of the packaged Linux app. The release
+workflow builds every installer. Not tested yet: the installers on real Windows and macOS machines,
+in particular macOS 12 on Intel hardware (a 2017 MacBook Air), and signed builds (none exist yet).
+
 ## Quick start
 
 1. Start the app and press **Open sample session** to try it, or **Open session folder** and pick a

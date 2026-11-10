@@ -1,4 +1,5 @@
 version: 2
+# Semver-major updates of the core toolchain are tracked and upgraded by hand (see ROADMAP.md).
 updates:
   - package-ecosystem: npm
     directory: /
@@ -6,9 +7,29 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
     groups:
-      minor-and-patch:
+      npm-minor-and-patch:
         update-types: [minor, patch]
+    ignore:
+      - dependency-name: electron
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react-dom
+        update-types: ["version-update:semver-major"]
+      - dependency-name: vite
+        update-types: ["version-update:semver-major"]
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+      - dependency-name: eslint
+        update-types: ["version-update:semver-major"]
+      - dependency-name: zod
+        update-types: ["version-update:semver-major"]
+      - dependency-name: vitest
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      actions-minor-and-patch:
+        update-types: [minor, patch]

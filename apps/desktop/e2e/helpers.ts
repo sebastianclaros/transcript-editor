@@ -71,5 +71,24 @@ export const audioTime = (page: Page) =>
  * hang the test.
  */
 export async function quit(app: ElectronApplication): Promise<void> {
+  const proc = app.process();
+  const closed = new Promise<void>((resolve) => {
+    if (proc.exitCode !== null || proc.signalCode !== null) resolve();
+    else proc.once("exit", () => resolve());
+  });
   await app.evaluate(({ app: a }) => a.exit(0)).catch(() => {});
+  // On CI runners the process can linger and block Playwright's worker teardown: force it.
+  const timer = setTimeout(() => proc.kill("SIGKILL"), 5_000);
+  await closed;
+  clearTimeout(timer);
+  // Playwright starts Electron in its own process group (non-Windows) and waits for its stdio to
+  // close. Helpers that outlive the main process (e.g. crashpad) keep those pipes open and hang the
+  // worker teardown on CI, so end the whole group.
+  if (process.platform !== "win32" && proc.pid) {
+    try {
+      process.kill(-proc.pid, "SIGKILL");
+    } catch {
+      /* group already gone */
+    }
+  }
 }

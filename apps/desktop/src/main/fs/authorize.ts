@@ -15,17 +15,30 @@ export function projectKeyOf(realPath: string): string {
   return createHash("sha256").update(realPath).digest("hex").slice(0, 32);
 }
 
+/** Strips the Win32 extended-length prefix (question-mark form, plain or UNC) so both sides compare alike. */
+function stripExtendedPrefix(p: string): string {
+  if (p.startsWith("\\\\?\\UNC\\")) return "\\\\" + p.slice(8);
+  if (p.startsWith("\\\\?\\")) return p.slice(4);
+  return p;
+}
+/**
+ * True when `real` is strictly inside `root`. Both must already be real paths (fs.realpath, which
+ * expands 8.3 short names on Windows). On win32 the comparison uses win32 path rules (separators,
+ * drive-letter case, `\\?\` prefix) and is case-insensitive; elsewhere it is exact (a false
+ * "outside" is the safe failure mode on case-insensitive macOS volumes).
+ */
 export function isInside(
   root: string,
   real: string,
   platform: NodeJS.Platform = process.platform,
 ): boolean {
-  const a = platform === "win32" ? root.toLowerCase() : root;
-  const b = platform === "win32" ? real.toLowerCase() : real;
-  const rel = path.relative(a, b);
-  return rel !== "" && !rel.startsWith("..") && !path.isAbsolute(rel);
+  const win = platform === "win32";
+  const p = win ? path.win32 : path.posix;
+  const a = win ? p.normalize(stripExtendedPrefix(root)).toLowerCase() : root;
+  const b = win ? p.normalize(stripExtendedPrefix(real)).toLowerCase() : real;
+  const rel = p.relative(a, b);
+  return rel !== "" && rel !== ".." && !rel.startsWith(".." + p.sep) && !p.isAbsolute(rel);
 }
-
 async function realOrResolved(fs: Fs, p: string): Promise<string> {
   try {
     return await fs.realpath(p);

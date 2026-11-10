@@ -51,6 +51,9 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: xvfb-run -a --server-args="-screen 0 1280x900x24" npm run test:e2e
+      - name: list leftover processes (diagnostics)
+        if: failure()
+        run: ps -eo pid,pgid,ppid,etime,args | grep -iE 'electron|crashpad|transcript' | grep -v grep || true
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
@@ -61,7 +64,6 @@ jobs:
   package-smoke:
     name: package smoke (linux)
     needs: verify
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
