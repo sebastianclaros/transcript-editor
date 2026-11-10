@@ -81,4 +81,14 @@ export async function quit(app: ElectronApplication): Promise<void> {
   const timer = setTimeout(() => proc.kill("SIGKILL"), 5_000);
   await closed;
   clearTimeout(timer);
+  // Playwright starts Electron in its own process group (non-Windows) and waits for its stdio to
+  // close. Helpers that outlive the main process (e.g. crashpad) keep those pipes open and hang the
+  // worker teardown on CI, so end the whole group.
+  if (process.platform !== "win32" && proc.pid) {
+    try {
+      process.kill(-proc.pid, "SIGKILL");
+    } catch {
+      /* group already gone */
+    }
+  }
 }
