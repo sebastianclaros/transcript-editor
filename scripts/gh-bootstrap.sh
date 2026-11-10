@@ -24,7 +24,17 @@ if gh repo view "$REPO" >/dev/null 2>&1; then
 else
   try gh repo create "$REPO" --public --description "$DESC" --source=. --remote=origin
 fi
-git remote get-url origin >/dev/null 2>&1 || try git remote add origin "https://github.com/$REPO.git"
+# Safety gate: only ever push to the intended repo through `origin`. Never reuse a remote pointing elsewhere.
+EXPECTED_URL="https://github.com/$REPO.git"
+if git remote get-url origin >/dev/null 2>&1; then
+  actual="$(git remote get-url origin)"
+  case "$actual" in
+    "$EXPECTED_URL" | "${EXPECTED_URL%.git}" | "git@github.com:$REPO.git") ;;
+    *) log "origin points to '$actual', expected '$EXPECTED_URL': aborting before any push"; exit 1 ;;
+  esac
+else
+  git remote add origin "$EXPECTED_URL" || { log "cannot add origin"; exit 1; }
+fi
 try gh repo edit "$REPO" --description "$DESC" --enable-issues --enable-discussions \
   --add-topic electron --add-topic transcription --add-topic react --add-topic typescript \
   --add-topic local-first --add-topic interview --add-topic open-source
@@ -35,9 +45,11 @@ try git push -u origin "$PUSH_REF:refs/heads/main"
 # 4. Labels from .github/labels.yml
 node -e '
 const fs=require("fs");
-for (const l of fs.readFileSync(".github/labels.yml","utf8").split("\n")) {
-  const m=l.match(/name: "([^"]+)", color: "([^"]+)", description: "([^"]*)"/);
-  if (m) console.log([m[1],m[2],m[3]].join("\t"));
+// Entries start at "- " in column 0 and may span several lines (prettier wraps long ones).
+for (const entry of fs.readFileSync(".github/labels.yml","utf8").split(/^- /m).slice(1)) {
+  const name=entry.match(/name:\s*"([^"]+)"/), color=entry.match(/color:\s*"([^"]+)"/);
+  const desc=entry.match(/description:\s*"([^"]*)"/);
+  if (name && color) console.log([name[1],color[1],desc ? desc[1] : ""].join("\t"));
 }' | while IFS=$'\t' read -r name color desc; do
   gh label create "$name" --color "$color" --description "$desc" --repo "$REPO" --force >/dev/null 2>&1 \
     && log "label: $name" || log "label failed: $name"
