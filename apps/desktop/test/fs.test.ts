@@ -95,12 +95,12 @@ describe("resolveInProject", () => {
   });
 
   it("isInside handles prefixes and windows case-insensitivity", () => {
-    expect(isInside("/a/b", "/a/b/c")).toBe(true);
-    expect(isInside("/a/b", "/a/bc")).toBe(false);
-    expect(isInside("/a/b", "/a/b")).toBe(false);
-    expect(isInside("/a/b", "/a/b/..c")).toBe(true); // a name starting with dots is not traversal
-    expect(isInside("/a/b", "/a/c")).toBe(false);
-    expect(isInside("/a/b", "/a/B/c")).toBe(false); // exact on posix
+    expect(isInside("/a/b", "/a/b/c", "linux")).toBe(true);
+    expect(isInside("/a/b", "/a/bc", "linux")).toBe(false);
+    expect(isInside("/a/b", "/a/b", "linux")).toBe(false);
+    expect(isInside("/a/b", "/a/b/..c", "linux")).toBe(true); // a name starting with dots is not traversal
+    expect(isInside("/a/b", "/a/c", "linux")).toBe(false);
+    expect(isInside("/a/b", "/a/B/c", "linux")).toBe(false); // exact on posix
   });
   it("isInside applies win32 rules: drive-letter case, separators, prefix, siblings, other drives", () => {
     const w = "win32" as const;
