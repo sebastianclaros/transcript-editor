@@ -6,7 +6,7 @@ All notable changes are documented here. The format is based on
 
 ## [Unreleased]
 
-## [0.1.0] - unreleased
+## [0.1.0] - 2026-11-10
 
 First public version: local desktop MVP.
 
@@ -24,6 +24,11 @@ First public version: local desktop MVP.
 - Optional transcription pipeline in `tools/transcribe`.
 - Security hardening: context isolation, sandbox, validated IPC, path authorization,
   `app-media://` range protocol, Content-Security-Policy, Electron Fuses.
+
+### Fixed
+
+- Windows: path containment uses win32 rules (drive-letter case, separators, extended-length prefix)
+  and CI runs green on Windows, macOS and Linux (#37).
 
 [Unreleased]: https://github.com/sebastianclaros/transcript-editor/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/sebastianclaros/transcript-editor/releases/tag/v0.1.0

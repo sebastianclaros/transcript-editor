@@ -46,6 +46,13 @@ Las versiones **todavía no están firmadas** (ver [docs/releasing.md](docs/rele
 - **Windows**: en el aviso de SmartScreen elegí _Más información_ y _Ejecutar de todas formas_.
 - **Linux**: `chmod +x transcript-editor-*.AppImage` y ejecutalo.
 
+### Estado por plataforma
+
+El CI corre los tests unitarios y de integración y el build en Ubuntu, Windows y macOS (runner Apple
+Silicon), la suite E2E real de Electron en Linux (Xvfb) y un smoke test de la app Linux empaquetada. El
+workflow de release genera todos los instaladores. Falta probar: los instaladores en Windows y macOS
+reales, en especial macOS 12 en hardware Intel (una MacBook Air 2017), y builds firmados (todavía no hay).
+
 ## Primeros pasos
 
 1. Abrí la app y tocá **Abrir sesión de ejemplo**, o **Abrir carpeta de sesión** y elegí una carpeta con

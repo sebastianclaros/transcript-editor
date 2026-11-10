@@ -14,11 +14,14 @@ and Linux installers and creates a **draft** release; you publish it by hand aft
 ## Steps
 
 ```bash
-npm version 0.1.0 --no-git-tag-version      # root package.json is the single version source
+npm version 0.1.0 --no-git-tag-version      # root package.json is the version source (the build uses it)
+npm version 0.1.0 --no-git-tag-version -w @transcript-editor/desktop   # keep the app package in step
 # edit CHANGELOG.md: move Unreleased entries under the new version and date
-git commit -am "chore(release): v0.1.0"
-git tag v0.1.0
-git push origin main v0.1.0                  # only after CI is green
+# commit on a branch, open a PR, merge it when CI is green (main is not pushed directly)
+git switch main && git pull --ff-only origin main
+gh run list --branch main --limit 1          # must be success
+git tag -a v0.1.0 -m v0.1.0
+git push origin v0.1.0                       # always name the remote and the ref explicitly
 ```
 
 The release workflow fails if the tag and the root version differ. It uploads the artifacts and a
@@ -60,8 +63,13 @@ If `git push` rejects `.github/workflows/*`, keep them on a local branch (`ci-wo
 (classic) with scopes `repo`, `project` and `workflow` (or a fine-grained token with Workflows read/write),
 then `git push origin ci-workflows:main` once `main` is up to date, or open a pull request from that branch.
 
+If the release workflow fails before the draft is published, fix it through a PR, then delete only that
+tag and draft (`gh release delete v0.1.0 --yes --cleanup-tag`) and tag the new `main` commit again.
+Never delete a published release or a tag that users may have downloaded.
+
 ## Verification record of the first build
 
 Verified locally on Linux x64: unit and integration tests, the real Electron E2E suite, `dist:dir`, AppImage and
-deb, the packaged app's `--smoke-test`. **Not verified**: macOS and Windows builds, signing, the GitHub Actions
-workflows (never executed), the Electron 41 behaviour on a real macOS 12.
+deb, the packaged app's `--smoke-test`. Since then CI (`.github/workflows/ci.yml`) is green on Ubuntu, Windows and
+macOS, including the Linux E2E suite under Xvfb and the packaged Linux smoke test. **Not verified**: signing, the
+installers on real macOS and Windows machines, the Electron 41 behaviour on a real macOS 12 (Intel).
