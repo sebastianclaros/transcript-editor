@@ -42,7 +42,7 @@
     "check": "npm run lint && npm run typecheck && npm test && npm run build && npm run check:privacy && npm run check:kiro && npm run check:links"
   },
   "devDependencies": {
-    "@eslint/js": "9.39.5",
+    "@eslint/js": "10.0.1",
     "@types/node": "22.20.5",
     "@vitest/coverage-v8": "3.2.7",
     "eslint": "9.39.5",
