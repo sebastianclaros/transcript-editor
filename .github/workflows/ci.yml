@@ -61,7 +61,6 @@ jobs:
   package-smoke:
     name: package smoke (linux)
     needs: verify
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
