@@ -1,0 +1,122 @@
+name: Release
+
+# Push a tag vX.Y.Z (equal to the root package.json version) to build installers for every OS and
+# create a DRAFT release. Run it manually with publish=false to build unsigned artifacts in a fork
+# without secrets (they are attached to the run, nothing is published).
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Create/update a GitHub draft release (false = just keep artifacts on the run)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify-tag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      tag: ${{ steps.v.outputs.tag }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - id: v
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            [ "${GITHUB_REF_NAME}" = "v${version}" ] || { echo "Tag ${GITHUB_REF_NAME} does not match package.json v${version}"; exit 1; }
+          fi
+          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
+          echo "Reminder: confirm the pinned Electron still supports the oldest macOS you ship to (docs/releasing.md)."
+      - run: npm ci
+      - run: npm run lint && npm run typecheck && npm test && npm run build
+
+  draft:
+    needs: verify-tag
+    if: inputs.publish == true || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.verify-tag.outputs.tag }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --draft --verify-tag --title "$TAG" --generate-notes
+
+  build:
+    name: build (${{ matrix.os }})
+    needs: [verify-tag, draft]
+    if: always() && needs.verify-tag.result == 'success' && (needs.draft.result == 'success' || needs.draft.result == 'skipped')
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      # GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}  # unused in v0.1; see docs/drive-sync-design.md
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Package and upload to the draft release
+        if: inputs.publish == true || github.event_name == 'push'
+        working-directory: apps/desktop
+        run: npx electron-builder --config electron-builder.config.cjs --publish always
+      - name: Package only (no publishing)
+        if: ${{ !(inputs.publish == true || github.event_name == 'push') }}
+        working-directory: apps/desktop
+        run: npx electron-builder --config electron-builder.config.cjs --publish never
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: ${{ !(inputs.publish == true || github.event_name == 'push') }}
+        with:
+          name: installers-${{ matrix.os }}
+          path: |
+            apps/desktop/dist/*.dmg
+            apps/desktop/dist/*.zip
+            apps/desktop/dist/*.exe
+            apps/desktop/dist/*.AppImage
+            apps/desktop/dist/*.deb
+
+  checksums:
+    needs: [verify-tag, build]
+    if: inputs.publish == true || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG: ${{ needs.verify-tag.outputs.tag }}
+    steps:
+      - run: |
+          mkdir assets && cd assets
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.dmg' --pattern '*.zip' --pattern '*.exe' --pattern '*.AppImage' --pattern '*.deb'
+          sha256sum * > SHA256SUMS
+          cat SHA256SUMS
+          gh release upload "$TAG" SHA256SUMS --repo "$GITHUB_REPOSITORY" --clobber
